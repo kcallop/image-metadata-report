@@ -6,6 +6,7 @@ import os
 import shutil
 import subprocess
 import sys
+import urllib.error
 from datetime import datetime
 from xml.sax.saxutils import escape
 
@@ -74,20 +75,33 @@ def save_settings(settings):
         json.dump(settings, f)
 
 
-def check_for_updates(api_url=None):
+def check_for_updates(latest_url=None):
     """Return (latest_version, download_url) if newer than this app, else None. Raises on failure."""
+    import ssl
     import urllib.request
-    url = api_url or f"https://api.github.com/repos/{UPDATE_REPO}/releases/latest"
-    req = urllib.request.Request(url, headers={"Accept": "application/vnd.github+json",
-                                               "User-Agent": "PhotoDetailsReport"})
-    with urllib.request.urlopen(req, timeout=8) as r:
-        rel = json.load(r)
-    latest = rel["tag_name"].lstrip("vV")
-    if _vtuple(latest) <= _vtuple(app_version()):
+    import certifi
+
+    class NoRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, *a, **k):
+            return None
+
+    base = f"https://github.com/{UPDATE_REPO}"
+    url = latest_url or f"{base}/releases/latest"
+    opener = urllib.request.build_opener(
+        NoRedirect, urllib.request.HTTPSHandler(context=ssl.create_default_context(cafile=certifi.where())))
+    try:
+        opener.open(urllib.request.Request(url, headers={"User-Agent": "PhotoDetailsReport"}), timeout=8)
+        raise RuntimeError("No release found")
+    except urllib.error.HTTPError as e:
+        location = e.headers.get("Location") if e.code in (301, 302, 303, 307, 308) else None
+        if not location:
+            raise
+    tag = location.rstrip("/").rsplit("/", 1)[-1]
+    latest = tag.lstrip("vV")
+    if not latest or _vtuple(latest) <= _vtuple(app_version()):
         return None
-    dmg = next((a["browser_download_url"] for a in rel.get("assets", [])
-                if a["name"].lower().endswith(".dmg")), None)
-    return latest, dmg or rel["html_url"]
+    return latest, f"{base}/releases/download/{tag}/PhotoDetailsReport-{latest}.dmg"
+
 
 # (section title, intro text, [(tag, friendly label, explanation)])
 SECTIONS = [
@@ -492,7 +506,9 @@ def gui():
 
 
 if __name__ == "__main__":
-    if len(sys.argv) >= 2:
+    if len(sys.argv) == 2 and sys.argv[1] == "--check-updates":
+        print(check_for_updates() or "up to date")
+    elif len(sys.argv) >= 2:
         src = sys.argv[1]
         dst = sys.argv[2] if len(sys.argv) > 2 else os.path.splitext(src)[0] + " - details.pdf"
         print(build_pdf(src, dst))

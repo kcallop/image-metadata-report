@@ -9,7 +9,7 @@ Everything runs locally; no photos are uploaded.
 ## Building
 
 ```
-python3 -m venv .venv && .venv/bin/pip install reportlab pillow pillow-heif pyinstaller
+python3 -m venv .venv && .venv/bin/pip install reportlab pillow pillow-heif certifi pyinstaller
 ./update_exiftool.sh      # refresh bundled exiftool and build the app
 ./build_dmg.sh            # create dist/PhotoDetailsReport-<version>.dmg
 ```
