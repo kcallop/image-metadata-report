@@ -15,3 +15,7 @@ python3 -m venv .venv && .venv/bin/pip install reportlab pillow pillow-heif cert
 ```
 
 Or double-click `Update and Build.command`.
+
+## License
+
+The app's own code is [MIT licensed](LICENSE). It bundles [ExifTool](https://exiftool.org) by Phil Harvey, which is distributed under its own terms (the Perl Artistic License / GPL); see `vendor/exiftool/README`.
