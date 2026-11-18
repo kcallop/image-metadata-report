@@ -1,0 +1,41 @@
+PHOTO DETAILS REPORT
+====================
+
+Turns a photo into a readable PDF: a preview, plain-language camera and
+settings info, location (if any), and a full technical appendix.
+
+INSTALL
+1. Drag "Photo Details Report" onto the Applications folder.
+2. Eject this disk image.
+
+FIRST LAUNCH (one time only)
+This app is not signed by Apple, so macOS will warn you the first time.
+
+  1. Open your Applications folder.
+  2. RIGHT-CLICK (or Control-click) "Photo Details Report" and choose Open.
+  3. In the dialog that appears, click Open.
+
+If you only see "Done" and "Move to Bin" (newer macOS versions):
+  1. Click Done.
+  2. Open System Settings > Privacy & Security.
+  3. Scroll down to the message about "Photo Details Report" and click
+     "Open Anyway", then confirm.
+
+After that, it opens normally with a double-click.
+
+USING IT
+Click "Choose a photo...", pick a file (JPEG, HEIC, PNG, RAW such as NEF,
+CR2, ARW, DNG, and others), choose where to save the PDF, and it opens
+automatically.
+
+PRIVACY
+Everything happens on your Mac. Nothing is uploaded. Note that photos can
+contain GPS location - the report warns you when this is the case.
+
+REQUIREMENTS
+A Mac with Apple Silicon (M1 or later), macOS 14 (Sonoma) or newer.
+
+CREDITS
+Metadata is read with ExifTool by Phil Harvey (exiftool.org), included
+under the Perl Artistic License. See the README inside the app package
+(Contents/Resources/vendor/exiftool/README).
